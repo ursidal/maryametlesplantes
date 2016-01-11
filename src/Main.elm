@@ -7,12 +7,13 @@ import String
 import List
 import Http
 
-main = StartApp.start { model = "", view = view, update = update }
+main = StartApp.start { model = model, view = view, update = update }
 
 type alias Model = 
     { animals : List Animal
     , searched : List Animal
     , viewedAnimals : List Animal 
+    , field : String
     }
     
 type alias Animal = 
@@ -33,7 +34,14 @@ emptyModel =
     { animals = []
     , searched = []
     , viewedAnimals = []
+    , field = ""
     }
+
+addAnimal : Model -> String -> String -> String -> Model
+addAnimal model name desc kind =
+    let newAnimal = makeAnimal name desc kind
+    in
+      {model | animals = List.append model.animals [newAnimal]}
 
 type Action 
     = NoOp
@@ -48,9 +56,9 @@ update action model =
     case action of
       NoOp -> model
       Search str -> {model | 
-        searched = filter (\n -> .name |> (String.contains str)) model.animals} 
+        searched = List.filter (\n -> n.name |> (String.contains str)) model.animals} 
       Click animal -> {model | 
-        model.viewedAnimals = List.append model.viewedAnimals [animal]}
+        viewedAnimals = List.append model.viewedAnimals [animal]}
 
 --view
 
@@ -59,20 +67,19 @@ view address model =
   div []
     [ input
         [ placeholder "Search"
-        , value 
+        , value model.field
         , on "input" targetValue (Signal.message address << Search)
         , myStyle
         ]
         []
     , ul [ myStyle ] 
          (List.map (\t ->  li 
-           [ on "click" address (Click t)] [text t.name]) <| List.filter (\l -> String.contains string l.name) model.animals)
+           [ onClick address (Click t)] [text t.name]) model.searched)
     , ul []
         ( List.map 
             (\t -> li [] 
-              [text ("nom: " .. t.name ..", genre: "..t.kind.."description: "..t.desc)]) 
+              [text (String.join "" ["nom: ", t.name,", genre: ",t.kind,"description: ",t.desc])]) 
               model.viewedAnimals
-            )
         )
     ]
 
@@ -86,9 +93,16 @@ myStyle =
     , ("font-size", "1em")
     ]
 
-myChangingStyle =
-    case mode of
-      
+
+model : Model
+model = 
+    List.foldl (\(a,b,c) acc -> addAnimal acc a b c) emptyModel 
+      [("chien","il fait wouaf","canidé")
+      ,("chat","il fait miaou","félin")
+      ,("canard","il fait coin coin","oiseau")
+      ,("ours","il fait grr","ursidé")
+      ]
+    
 
 listdata : List String
 listdata = [
