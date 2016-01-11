@@ -67,7 +67,6 @@ view address model =
   div []
     [ input
         [ placeholder "Search"
-        , value model.field
         , on "input" targetValue (Signal.message address << Search)
         , myStyle
         ]
@@ -78,7 +77,7 @@ view address model =
     , ul []
         ( List.map 
             (\t -> li [] 
-              [text (String.join "" ["nom: ", t.name,", genre: ",t.kind,"description: ",t.desc])]) 
+              [text (String.join "" ["nom: ", t.name,", genre: ",t.kind,", description: ",t.desc])]) 
               model.viewedAnimals
         )
     ]
