@@ -58,14 +58,22 @@ view : Address Action -> Model -> Html
 view address model =
   div []
     [ input
-        [ placeholder "Text to reverse"
+        [ placeholder "Search"
         , value 
-        , on "input" targetValue (Signal.message address)
+        , on "input" targetValue (Signal.message address << Search)
         , myStyle
         ]
         []
     , ul [ myStyle ] 
-         (List.map (\t ->  li [onClick (Signal.message address)] [text t]) <| List.filter (String.contains string) listdata)
+         (List.map (\t ->  li 
+           [ on "click" address (Click t)] [text t.name]) <| List.filter (\l -> String.contains string l.name) model.animals)
+    , ul []
+        ( List.map 
+            (\t -> li [] 
+              [text ("nom: " .. t.name ..", genre: "..t.kind.."description: "..t.desc)]) 
+              model.viewedAnimals
+            )
+        )
     ]
 
 
