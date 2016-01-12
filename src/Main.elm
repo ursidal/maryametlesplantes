@@ -65,33 +65,47 @@ update action model =
 
 view : Address Action -> Model -> Html
 view address model =
-  div []
-    [ input
-        [ placeholder "Search"
-        , on "input" targetValue (Signal.message address << Search)
-        , myStyle
-        ]
-        []
-    , ul [ myStyle ] 
+  div 
+    [ id "container"
+    , style [("width","100%"),("height","100%")]
+    ]
+    [ div 
+      [style [("width","50%"),("display","inline-block"),("background","#eee")]] 
+      [ input
+          [ placeholder "Search"
+          , on "input" targetValue (Signal.message address << Search)
+          , myStyle
+          ]
+          []
+      , ul [ myStyle ] 
          (List.map (\t ->  li 
            [ onClick address (Click t)] [text t.name]) model.searched)
-    , ul []
-        ( List.map 
+      ]
+    , div 
+      [style [("width","50%"),("display","inline-block")]]
+      [ ul []
+          ( List.map 
             (\t -> li [] 
               [Markdown.toHtml (String.join "" ["**nom:** ", t.name,", **genre:** ",t.kind,", **description:** ",t.desc])])
               model.viewedAnimals
-        )
+          )
+      ]
     ]
-
+    
 
 myStyle : Attribute
 myStyle =
   style
-    [ ("width", "40%")
+    [ ("width", "80%")
     , ("height", "2em")
     , ("padding", "5px 5px 5px 5px")
     , ("font-size", "1em")
     ]
+    
+leftPaneStyle : Attribute
+leftPaneStyle =
+    style
+      [ ("float","left")] 
 
 
 model : Model
