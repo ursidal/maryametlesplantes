@@ -6,6 +6,7 @@ import StartApp.Simple as StartApp
 import String
 import List
 import Http
+import Markdown
 
 main = StartApp.start { model = model, view = view, update = update }
 
@@ -77,7 +78,7 @@ view address model =
     , ul []
         ( List.map 
             (\t -> li [] 
-              [text (String.join "" ["nom: ", t.name,", genre: ",t.kind,", description: ",t.desc])]) 
+              [Markdown.toHtml (String.join "" ["**nom:** ", t.name,", **genre:** ",t.kind,", **description:** ",t.desc])])
               model.viewedAnimals
         )
     ]
